@@ -52,12 +52,21 @@ io.on('connection', function(socket){
 				client.on('notification', function(msg) {
 					var payload = msg.payload.split('|');
 					if(payload[1] == 'DELETE'){
+						while(payload[3].indexOf('"') !== -1){
+							payload[3] = payload[3].replace('"', '');
+						}						
 						io.sockets.connected[socket.id].emit('delete', payload[3]);
 					}
 					else if(payload[1] == 'UPDATE'){
+						while(payload[3].indexOf('"') !== -1){
+							payload[3] = payload[3].replace('"', '');
+						}
 						io.sockets.connected[socket.id].emit('update', payload[3]);
 					}
 					else if(payload[1] == 'INSERT'){
+						while(payload[3].indexOf('"') !== -1){
+							payload[3] = payload[3].replace('"', '');
+						}
 						io.sockets.connected[socket.id].emit('insert', payload[3]);
 					}
 				});
