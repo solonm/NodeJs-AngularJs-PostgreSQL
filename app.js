@@ -1,8 +1,10 @@
 var app = require('express')();
+var app = express();
 var http = require('http').Server(app);
 var pg = require ('pg');
 var io = require('socket.io')(http);
-
+//Added this to be able to load the static js files for the AngularJs controllers
+app.use(express.static('front'));
 var pgConString = "pg://node:node@localhost:5432/test"
 
 var socketP = null;
@@ -27,12 +29,14 @@ io.on('connection', function(socket){
 		 	var i = io.sockets.connected.indexOf(socket);
       		delete io.sockets.connected[i];
 		}
+	client._events = {};
 	});
+	var client = new pg.Client(pgConString);
 	for(i=0;i<io.sockets.connected.length;i++){
 		console.log("connected: ",io.sockets.connected[i].id);
 		io.sockets.connected[i].emit("init");
 	}
-	pg.connect(pgConString, function(err, client, done) {
+	client.connect(function(err, done) {
 		if(err) {
 			console.log(err);
 		}
@@ -48,13 +52,13 @@ io.on('connection', function(socket){
 				client.on('notification', function(msg) {
 					var payload = msg.payload.split('|');
 					if(payload[1] == 'DELETE'){
-						io.emit('delete', payload[3]);
+						io.sockets.connected[socket.id].emit('delete', payload[3]);
 					}
 					else if(payload[1] == 'UPDATE'){
-						io.emit('update', payload[3]);
+						io.sockets.connected[socket.id].emit('update', payload[3]);
 					}
 					else if(payload[1] == 'INSERT'){
-						io.emit('insert', payload[3]);
+						io.sockets.connected[socket.id].emit('insert', payload[3]);
 					}
 				});
 			}
