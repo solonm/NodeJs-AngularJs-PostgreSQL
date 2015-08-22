@@ -21,4 +21,4 @@ Run the scripts in the order they are in the scripts.sql file.
   
 	var pgConString = "pg://node:node@localhost:5432/test"
 	
-	***For this example to work you will need to download the PostreSQL client from here http://www.pgadmin.org/download/ so you can make the insert/edit/delete to see the result 
+######***For this example to work you will need to download the PostreSQL client from here http://www.pgadmin.org/download/ so you can make the insert/edit/delete to see the result 
