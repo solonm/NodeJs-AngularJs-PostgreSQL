@@ -1,6 +1,7 @@
  angular.module('myApp', []).controller('myCtrl', 
      function($scope) {
-     
+     $scope.todo = "ins";
+     this.rowToUpd = null;
       $scope.itemChanged = function(item){
           debugger;
           item.$addClass = "active";
@@ -22,7 +23,7 @@
       socket.on('insert', function(msg){
       	console.log('insert: ', msg);
         var newEntry = msg.substring(1, msg.length-1).split(',');
-        var entry = {"id": newEntry[0], "name":newEntry[1]};
+        var entry = {"id": newEntry[1], "name":newEntry[0]};
         if(!containsObject(entry,$scope.entries)){
           $scope.entries.push(entry);
           $scope.$apply();
@@ -68,8 +69,17 @@
         return false;
       };
       
+      this.insert = function(data){
+          socket.emit("insertRow", data);
+      };
+      this.setForUpdate= function(item){
+          $scope.textToAdd = item.entry.name;
+          this.rowToUpd = item.entry.id;
+          $scope.todo = "upd";
+      }
       
-      
-      
+       this.update = function(data){
+          socket.emit("updateRow", {"id": this.rowToUpd, "value":data});
+      };
       
    });

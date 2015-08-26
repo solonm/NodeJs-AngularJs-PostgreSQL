@@ -14,11 +14,19 @@
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 	<script src="/app.js"></script>
     <h3>Real-Time with NodeJs(using express, socket.io and pg)/AngularJs/PostgreSQL</h3>
-    <div ng-app="myApp" ng-controller="myCtrl">
-      <div ng-repeat="entry in entries" class="col-sm-2">
-	       <ul class="list-group">
-           <li class="list-group-item" ng-class="{active: hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false">{{entry.name}}</li>
-		     </ul>
+    <div ng-app="myApp" ng-controller="myCtrl as c">
+       <div style="clear:both; margin-bottom:10px;">
+          <label style="clear:both; float: left;">Insert Value</label> 
+          <input  style="clear:left" type="text" name="textToAdd" ng-model="textToAdd">
+          <button ng-show="todo=='ins'" ng-click="c.insert(textToAdd)">Insert</button>
+          <button ng-show="todo=='upd'" ng-click="c.update(textToAdd)">Update</button>
+      </div>
+      <div style="clear:both">
+        <div ng-repeat="entry in entries" class="col-sm-2">
+          <ul class="list-group">
+            <li class="list-group-item" ng-click="c.setForUpdate(this)" ng-class="{active: hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false">{{entry.name}}</li>
+          </ul>
+        </div>
       </div>
     </div>
   </body>

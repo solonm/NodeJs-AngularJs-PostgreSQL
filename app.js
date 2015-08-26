@@ -6,7 +6,8 @@ var io = require('socket.io')(http);
 //Added this to be able to load the static js files for the AngularJs controllers
 app.use(express.static('front'));
 var pgConString = "pg://node:node@localhost:5432/test"
-
+var  insert = null;
+var update = null;
 var socketP = null;
 
 io.on('connection', function(socket){
@@ -21,7 +22,13 @@ io.on('connection', function(socket){
 	socket.on('delete', function(msg){
 		io.emit('delete', msg);
 	});
+	socket.on('insertRow', function(data){
+		insert(data);
+	});
 	
+	socket.on('updateRow', function(data){
+		update(data);
+	});
 	
 	socket.on('disconnect', function() {
 		console.log('Got disconnect!');
@@ -72,6 +79,31 @@ io.on('connection', function(socket){
 				});
 			}
 			var listener = client.query("LISTEN watchers");
+			insert = function(data) {
+				//let's pretend we have a user table with the 'id' as the auto-incrementing primary key
+				var queryText = 'INSERT INTO test(name) VALUES($1) RETURNING id'
+				client.query(queryText, [data], function(err, result) {
+					if(err){
+						console.log("err", err);	
+					} 
+					else {
+						console.log("id:", result.rows[0].id);
+					}
+				});
+			}
+			
+			update = function(data) {
+				//let's pretend we have a user table with the 'id' as the auto-incrementing primary key
+				var queryText = 'UPDATE test set name = $1 WHERE id= $2 RETURNING id'
+				client.query(queryText, [data.value, data.id], function(err, result) {
+					if(err){
+						console.log("err", err);	
+					} 
+					else {
+						console.log("id:", result.rows[0].id);
+					}
+				});
+			}
 		}
 	});
 });
